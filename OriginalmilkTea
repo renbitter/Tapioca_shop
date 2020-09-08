@@ -2,6 +2,20 @@ import maya.cmds as cmds
 import maya.mel as MEL
 import sys
 
+"""
+import sys;sys.path.append('h:\\samittra\\python_scripts')
+import maya.cmds as cmds
+import tapioca_shop as tapioca
+reload(tapioca)
+"""
+
+def listToString(s):
+    str1 = " "
+    return (str1.join(s))
+
+def turnOnColorManagement():
+    cmds.colorManagementPrefs(e=1, cme=1)
+
 def Best(a, b):
     """
     i love tapioca
@@ -20,14 +34,172 @@ def SelectTeethTongue(a, b):
     geom = cmds.ls(a, b, long=True)
     cmds.select(geom)
 
-
-def listToString(s):
-    str1 = " "
-    return (str1.join(s))
-
-def changeCol(r, g, b):
+def changeOutlinerCol(r, g, b):
     x = cmds.ls(sl=True)
     for i in x:
         cmds.setAttr ( i + ".useOutlinerColor" , True)
         cmds.setAttr ( i + ".outlinerColor" , r,g,b)
         MEL.eval('AEdagNodeCommonRefreshOutliners();')
+
+def transferShadingSets():
+    ## select the model ##
+    selection = cmds.ls(sl=True, dag=1, type=['mesh'])
+    for each in selection:
+    	cmds.transferShadingSets( sampleSpace=1 )
+
+def deleteDisplayLayer():
+    lays = cmds.ls(type='displayLayer')
+    cmds.delete(lays)
+
+    if lay == 'defaultLayer':
+    	cmds.delete(lay)
+
+def deleteRenderLayer():
+    # select masterLayer
+    cmds.editRenderLayerGlobals(currentRenderLayer='defaultRenderLayer')
+    # iterate and delete all render layers
+    for each in cmds.ls(type='renderLayer'):
+    	if each != 'defaultRenderLayer':
+    		cmds.delete(each)
+
+def delete_display_layer():
+    """Delete displayLayer
+    """
+    lays = cmds.ls(type='displayLayer')
+    if not lays:
+        return
+    for lay in lays:
+        if lay == 'defaultLayer':
+            continue
+        cmds.delete(lay)
+
+        print(lay)
+
+def createColorSet():
+    cmds.polyColorSet(create=True, colorSet='maskA')
+
+def importLDV_Camera():
+    file_path = "W:/assets/character/shiba/shibaHero/work/samittra/maya/scenes/shibaHero_LDV_camera.ma"
+    cmds.file(file_path, i=True, type='mayaAscii', r=False)
+
+def setSM_to_RAW():
+    # target is the string(the name) do you want to find them
+    target = '_sm'
+    # list all file nodes in scene
+    all_file_nodes = cmds.ls(type='file')
+    # Check if all_file_nodes is not empty
+    assert all_file_nodes is not None
+    # Loop through all nodes
+    for each in all_file_nodes:
+       # Get texture file name
+       texture_path = cmds.getAttr(each + '.fileTextureName')
+       # Check if the texture file name contains the string that you are interested in
+       if target in texture_path:
+           # If TRUE, set color space to 'Raw' baby!
+           cmds.setAttr(each + '.colorSpace', 'Raw', type='string')
+       else:
+           # If FALSE, throw some error
+           sys.stderr.write('String is not found!')
+
+def TurnOn_ContourShader():
+    # Set Is Contour Shader for ppiToonDX
+    target = '_contour_ppi'
+
+    for shading_engine in cmds.ls(type='shadingEngine'):
+    	for shader_path in cmds.ls(cmds.listConnections(shading_engine), mat=True):
+    		if target in shader_path:
+    			cmds.select(shader_path, add=True)
+    			cmds.setAttr(shader_path + ".isContourShader", 1)
+    			print shader_path
+
+def setGeo_color_S109():
+
+## Render stat setting for Color ##
+    selection = cmds.ls(sl=True, dag=1, type=['mesh'])
+    for each in selection:
+        cmds.select(each, r=True)
+        cmds.setAttr(".castsShadows", True)
+        cmds.setAttr(".receiveShadows", True)
+        cmds.setAttr(".holdOut", False)
+        cmds.setAttr(".motionBlur", True)
+        cmds.setAttr(".primaryVisibility", True)
+        cmds.setAttr(".smoothShading", True)
+        cmds.setAttr(".visibleInReflections", True)
+        cmds.setAttr(".visibleInRefractions", True)
+        cmds.setAttr(".doubleSided", True)
+        cmds.setAttr(".opposite", False)
+
+
+        ## Visibility ##
+        cmds.setAttr(".primaryVisibility", True)
+        cmds.setAttr(".aiVisibleInDiffuseReflection", True)
+        cmds.setAttr(".aiVisibleInSpecularReflection", True)
+        cmds.setAttr(".aiVisibleInDiffuseTransmission", True)
+        cmds.setAttr(".aiVisibleInSpecularTransmission", True)
+        cmds.setAttr(".aiVisibleInVolume", True)
+        cmds.setAttr(".aiSelfShadows", True)
+
+        ## Export ##
+        cmds.setAttr(".aiExportTangents", False)
+        cmds.setAttr(".aiExportColors", True)
+        cmds.setAttr(".aiExportRefPoints", True)
+        cmds.setAttr(".aiExportRefNormals", False)
+        cmds.setAttr(".aiExportRefTangents", False)
+
+def setGeo_contour_S109():
+    ## Render stat setting for Contour ##
+
+    selection = cmds.ls(sl=True, dag=1, type=['mesh'])
+    for each in selection:
+        cmds.select(each, r=True)
+
+        ## Mesh Component Display ##
+        ## cmds.setAttr(each + ".displayColors", True) ##
+
+        ## Render stat ##
+        cmds.setAttr(each + ".castsShadows", True)
+        cmds.setAttr(each + ".receiveShadows", True)
+        cmds.setAttr(each + ".holdOut", False)
+        cmds.setAttr(each + ".motionBlur", True)
+        cmds.setAttr(each + ".primaryVisibility", True)
+        cmds.setAttr(each + ".smoothShading", True)
+        cmds.setAttr(each + ".visibleInReflections", True)
+        cmds.setAttr(each + ".visibleInRefractions", True)
+        cmds.setAttr(each + ".doubleSided", False)
+        cmds.setAttr(each + ".opposite", True)
+
+
+        ## Visibility ##
+        cmds.setAttr(each + ".aiOpaque", False)
+        cmds.setAttr(each + ".primaryVisibility", True)
+        cmds.setAttr(each + ".aiVisibleInDiffuseReflection", True)
+        cmds.setAttr(each + ".aiVisibleInSpecularReflection", True)
+        cmds.setAttr(each + ".aiVisibleInDiffuseTransmission", True)
+        cmds.setAttr(each + ".aiVisibleInSpecularTransmission", True)
+        cmds.setAttr(each + ".aiVisibleInVolume", True)
+        cmds.setAttr(each + ".aiSelfShadows", True)
+
+        ## Export ##
+        cmds.setAttr(each + ".aiExportTangents", False)
+        cmds.setAttr(each + ".aiExportColors", True)
+        cmds.setAttr(each + ".aiExportRefPoints", True)
+        cmds.setAttr(each + ".aiExportRefNormals", False)
+        cmds.setAttr(each + ".aiExportRefTangents", False)
+
+def SMconnect_S109():
+
+    texSel = cmds.ls(type='file', sl=True)
+    shaderSel = cmds.ls(type='ppiToonDX', sl=True)
+    ## sm replace connect R,G to ppiToonDX attr
+    for i in shaderSel:
+    	cmds.connectAttr(listToString(texSel) + '.outColor.outColorR', i  + '.diffuseOffset2Shadow', f=True)
+    	cmds.connectAttr(listToString(texSel) + '.outColor.outColorG', i  + '.diffuseOffset2Shadow2', f=True)
+
+def ():
+
+
+
+
+###
+if __name__ == "__main__":
+    main()
