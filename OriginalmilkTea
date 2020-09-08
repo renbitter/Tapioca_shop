@@ -1,0 +1,46 @@
+import maya.cmds as cmds
+import maya.mel as MEL
+import sys
+
+def Best(a, b):
+    """
+    i love tapioca
+    """
+    geom = cmds.ls(a, b)
+
+    assert geom > 0
+    cmds.select(geom)
+
+    sys.stderr.write('No teeth and tongue found! Character is a mob')
+
+def SelectTeethTongue(a, b):
+    """
+    i love famima~
+    """
+    geom = cmds.ls(a, b, long=True)
+    cmds.select(geom)
+
+
+def listToString(s):
+    str1 = " "
+    return (str1.join(s))
+
+def changeCol(r, g, b):
+    x = cmds.ls(sl=True)
+    for i in x:
+        cmds.setAttr ( i + ".useOutlinerColor" , True)
+        cmds.setAttr ( i + ".outlinerColor" , r,g,b)
+        MEL.eval('AEdagNodeCommonRefreshOutliners();')
+def
+import maya.cmds as cmds
+
+## select the model ##
+    selection = cmds.ls(sl=True, dag=1, type=['mesh'])
+    for each in selection:
+    	cmds.transferShadingSets( sampleSpace=1 )
+
+
+
+####
+if __name__ == "__main__":
+    main()
