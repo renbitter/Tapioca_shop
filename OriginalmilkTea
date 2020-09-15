@@ -3,8 +3,8 @@ import maya.mel as MEL
 import sys
 
 """
-import sys;sys.path.append('h:\\samittra\\python_scripts')
 import maya.cmds as cmds
+import sys;sys.path.append('h:\\samittra\\python_scripts')
 import tapioca_shop as tapioca
 reload(tapioca)
 """
@@ -112,8 +112,21 @@ def TurnOn_ContourShader():
     			cmds.setAttr(shader_path + ".isContourShader", 1)
     			print shader_path
 
-def setGeo_color_S109():
+def create_annotate():
+    locator = cmds.spaceLocator()
+    annote = cmds.annotate(locator, tx='my annotation text', p=(5, 6, 5) )
+    cmds.parent(locator, annote)
 
+def create_display_layer_name():
+    #green_color = 14
+    obj = cmds.ls(sl=True)
+    layer = cmds.createDisplayLayer(obj, noRecurse=True, name = 'contourLine')
+    cmds.setAttr(layer + '.displayType', 0)
+    #cmds.setAttr(layer + '.color', green_color)
+    cmds.setAttr(layer + '.overrideColorRGB', 1, 0, 0)
+    cmds.setAttr(layer + '.overrideRGBColors', 1)
+
+def setGeo_color_S109():
 ## Render stat setting for Color ##
     selection = cmds.ls(sl=True, dag=1, type=['mesh'])
     for each in selection:
