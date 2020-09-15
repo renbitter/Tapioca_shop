@@ -195,11 +195,6 @@ def SMconnect_S109():
     	cmds.connectAttr(listToString(texSel) + '.outColor.outColorR', i  + '.diffuseOffset2Shadow', f=True)
     	cmds.connectAttr(listToString(texSel) + '.outColor.outColorG', i  + '.diffuseOffset2Shadow2', f=True)
 
-def ():
-
-
-
-
 ###
 if __name__ == "__main__":
     main()
